@@ -901,14 +901,13 @@ async function submitOrder() {
     payload.items[item.name + " / " + item.price.toFixed(0) + " zł"] = item.qty;
   });
 
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+  const response = await fetch(SCRIPT_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "text/plain;charset=utf-8"
+  },
+  body: JSON.stringify(payload)
+});
 
     const result = await response.json();
 
