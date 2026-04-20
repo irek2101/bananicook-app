@@ -33,15 +33,6 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('Service Worker registered'))
-      .catch(err => console.error('SW registration failed:', err));
-  });
-}
-</script>
 
     body {
       font-family: 'DM Sans', sans-serif;
@@ -243,6 +234,55 @@ if ('serviceWorker' in navigator) {
     .order-btn:active { background: var(--green-mid); transform: scale(0.98); }
     .order-btn:disabled { background: #ccc; cursor: not-allowed; }
 
+
+    .checkout-form {
+      padding: 16px 20px 8px;
+      border-top: 1px solid var(--green-pale);
+    }
+
+    .checkout-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      margin-top: 10px;
+    }
+
+    .checkout-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      outline: none;
+      background: white;
+    }
+
+    .checkout-input:focus {
+      border-color: var(--green-mid);
+    }
+
+    .checkout-note {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .checkout-error {
+      margin: 10px 20px 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(198,40,40,0.08);
+      color: #c62828;
+      font-size: 13px;
+      font-weight: 500;
+      display: none;
+    }
+
     /* ── ADMIN PANEL ── */
     .admin-panel { display: none; padding: 16px; padding-bottom: 90px; }
     .admin-panel.visible { display: block; }
@@ -375,7 +415,7 @@ if ('serviceWorker' in navigator) {
 <div id="splash">
   <div class="splash-emoji">🥟</div>
   <div class="splash-logo">Bananicook</div>
-  <div class="splash-sub">Catering Boart</div>
+  <div class="splash-sub">Catering Board</div>
 </div>
 
 <!-- INSTALL BANNER -->
@@ -471,6 +511,7 @@ if ('serviceWorker' in navigator) {
 <div class="cart-sheet" id="cartSheet">
   <div class="sheet-handle"></div>
   <div class="sheet-title">🛒 Twoje zamówienie</div>
+  <div id="cartError" class="checkout-error"></div>
   <div id="cartContent"></div>
 </div>
 
@@ -484,7 +525,7 @@ if ('serviceWorker' in navigator) {
 
 <script>
 // ── DATA ──
-const ADMIN_PASSWORD = "bananicook2024";
+const ADMIN_PASSWORD = "bananicook2024"; // TODO: przenieść do backendu / Apps Script
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeSRtRmvbwixXIng31EKl2W_rFo5Bh73vsBZrta_ijfVgbaEA/viewform";
 
 const MENU = [
@@ -557,6 +598,8 @@ let unavailable = JSON.parse(localStorage.getItem('unavailable') || '{}');
 let orders = JSON.parse(localStorage.getItem('orders') || '[]');
 let isAdminLoggedIn = false;
 let deferredInstallPrompt = null;
+let customerName = '';
+let customerPhone = '';
 
 // ── INIT ──
 window.addEventListener('load', () => {
@@ -692,6 +735,10 @@ function toggleCart() {
 
 function renderCart() {
   const content = document.getElementById('cartContent');
+  const errorBox = document.getElementById('cartError');
+  errorBox.style.display = 'none';
+  errorBox.textContent = '';
+
   const allItems = MENU.flatMap(c => c.items);
   const cartItems = Object.entries(cart).filter(([,q]) => q > 0);
 
@@ -722,8 +769,71 @@ function renderCart() {
     <span class="cart-total-value">${total.toFixed(2).replace('.',',')} zł</span>
   </div>`;
 
+  html += `
+    <div class="checkout-form">
+      <label class="checkout-label" for="customerName">Imię *</label>
+      <input
+        type="text"
+        id="customerName"
+        class="checkout-input"
+        placeholder="Np. Irek"
+        value="${customerName}"
+        oninput="customerName=this.value"
+      >
+
+      <label class="checkout-label" for="customerPhone">Telefon *</label>
+      <input
+        type="tel"
+        id="customerPhone"
+        class="checkout-input"
+        placeholder="Np. 605767730"
+        value="${customerPhone}"
+        oninput="customerPhone=this.value"
+      >
+
+      <div class="checkout-note">
+        Podaj imię i numer telefonu, aby można było potwierdzić zamówienie lub skontaktować się w razie zmian.
+      </div>
+    </div>
+  `;
+
   content.innerHTML = html;
-  content.insertAdjacentHTML('beforeend', `<button class="order-btn" onclick="submitOrder()">✅ Złóż zamówienie (${total.toFixed(2).replace('.',',')} zł)</button>`);
+  content.insertAdjacentHTML(
+    'beforeend',
+    `<button class="order-btn" onclick="submitOrder()">✅ Złóż zamówienie (${total.toFixed(2).replace('.',',')} zł)</button>`
+  );
+}
+
+function normalizePhone(phone) {
+  return phone.replace(/\s+/g, '').replace(/-/g, '');
+}
+
+function validateCustomerData() {
+  const errorBox = document.getElementById('cartError');
+  const name = (customerName || '').trim();
+  const phone = normalizePhone(customerPhone || '');
+
+  if (!name) {
+    errorBox.textContent = 'Wpisz imię.';
+    errorBox.style.display = 'block';
+    return false;
+  }
+
+  if (!phone) {
+    errorBox.textContent = 'Wpisz numer telefonu.';
+    errorBox.style.display = 'block';
+    return false;
+  }
+
+  if (!/^\+?\d{9,15}$/.test(phone)) {
+    errorBox.textContent = 'Wpisz poprawny numer telefonu.';
+    errorBox.style.display = 'block';
+    return false;
+  }
+
+  errorBox.style.display = 'none';
+  errorBox.textContent = '';
+  return true;
 }
 
 function removeCartItem(id) {
@@ -736,6 +846,8 @@ function removeCartItem(id) {
 
 function submitOrder() {
   if (!Object.keys(cart).length) return;
+  if (!validateCustomerData()) return;
+
   const allItems = MENU.flatMap(c => c.items);
   const orderItems = Object.entries(cart).filter(([,q]) => q > 0).map(([id, qty]) => {
     const item = allItems.find(i => i.id === id);
@@ -745,12 +857,18 @@ function submitOrder() {
   const order = {
     id: Date.now(),
     time: new Date().toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'}),
+    customer: {
+      name: customerName.trim(),
+      phone: normalizePhone(customerPhone)
+    },
     items: orderItems,
     total
   };
   orders.push(order);
   localStorage.setItem('orders', JSON.stringify(orders));
   cart = {};
+  customerName = '';
+  customerPhone = '';
   updateCartCount();
   renderMenu();
   toggleCart();
@@ -815,7 +933,7 @@ function renderAdminPanel() {
           <span class="order-time">🕐 ${o.time}</span>
           <span class="order-total-badge">${o.total.toFixed(2).replace('.',',')} zł</span>
         </div>
-        <div class="order-items">${o.items.map(i => `${i.name} ×${i.qty}`).join('<br>')}</div>
+        <div class="order-items"><strong>Klient:</strong> ${o.customer?.name || '-'}<br><strong>Telefon:</strong> ${o.customer?.phone || '-'}<br><br>${o.items.map(i => `${i.name} ×${i.qty}`).join('<br>')}</div>
       </div>`).join('');
   }
 
@@ -844,6 +962,15 @@ function clearOrders() {
     localStorage.setItem('orders', JSON.stringify(orders));
     renderAdminPanel();
   }
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('Service Worker registered'))
+      .catch(err => console.error('SW registration failed:', err));
+  });
 }
 </script>
 </body>
