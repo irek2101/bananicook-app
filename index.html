@@ -527,6 +527,7 @@
 // ── DATA ──
 const ADMIN_PASSWORD = "bananicook2024"; // TODO: przenieść do backendu / Apps Script
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeSRtRmvbwixXIng31EKl2W_rFo5Bh73vsBZrta_ijfVgbaEA/viewform";
+const SCRIPT_URL = "TU_WKLEJ_ADRES_WEB_APP";
 
 const MENU = [
   {
@@ -613,11 +614,18 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('splash').classList.add('hidden');
   }, 1800);
+
   renderMenu();
   renderTabs();
   updateStatus();
   setInterval(updateStatus, 60000);
-  document.getElementById('adminDate').textContent = new Date().toLocaleDateString('pl-PL', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  document.getElementById('adminDate').textContent = new Date().toLocaleDateString('pl-PL', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 });
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -641,9 +649,11 @@ function installApp() {
 // ── STATUS ──
 function updateStatus() {
   const now = new Date();
-  const h = now.getHours(), d = now.getDay();
+  const h = now.getHours();
+  const d = now.getDay();
   const isWeekday = d >= 1 && d <= 5;
   const isOpen = isWeekday && h >= 6 && h < 15;
+
   const banner = document.getElementById('statusBanner');
   banner.innerHTML = `<div class="status-banner ${isOpen ? 'status-open' : 'status-closed'}">
     ${isOpen ? '🟢 Formularz otwarty – zamówienia do godz. 15:00' : '🔴 Formularz zamknięty' + (!isWeekday ? ' – weekendy wolne' : ' – otwieramy o 6:00')}
@@ -653,16 +663,22 @@ function updateStatus() {
 // ── RENDER TABS ──
 function renderTabs() {
   const tabs = document.getElementById('categoryTabs');
-  tabs.innerHTML = `<div class="tab active" onclick="scrollToCategory('all', this)">Wszystkie</div>` +
+  tabs.innerHTML =
+    `<div class="tab active" onclick="scrollToCategory('all', this)">Wszystkie</div>` +
     MENU.map(cat => `<div class="tab" onclick="scrollToCategory('${cat.catKey}', this)">${cat.cat.split(' ')[0]} ${cat.cat.split(' ').slice(1).join(' ')}</div>`).join('');
 }
 
 function scrollToCategory(key, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  if (key === 'all') { window.scrollTo({top:0, behavior:'smooth'}); return; }
+
+  if (key === 'all') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
   const el2 = document.getElementById('cat-' + key);
-  if (el2) el2.scrollIntoView({behavior: 'smooth', block: 'start'});
+  if (el2) el2.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ── RENDER MENU ──
@@ -683,16 +699,16 @@ function renderMenu() {
 function renderItem(item) {
   const qty = cart[item.id] || 0;
   const isUnavail = unavailable[item.id];
-  const imgContent = item.img
-    ? `<img src="${item.img}" alt="${item.name}" onerror="this.parentElement.innerHTML='🥟'">`
-    : getEmoji(item.id);
+
   return `
     <div class="menu-item ${isUnavail ? 'unavailable' : ''}" id="item-${item.id}">
       <div class="item-inner">
-        <div class="item-img">${item.img ? `<img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">` : getEmoji(item.id)}</div>
+        <div class="item-img">
+          ${item.img ? `<img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='${getEmoji(item.id)}'">` : getEmoji(item.id)}
+        </div>
         <div class="item-info">
           <div class="item-name">${item.name}</div>
-          <div class="item-price">${item.price.toFixed(2).replace('.',',')} zł</div>
+          <div class="item-price">${item.price.toFixed(2).replace('.', ',')} zł</div>
           ${isUnavail ? '<div class="item-unavailable-tag">⛔ Niedostępne</div>' : ''}
         </div>
         ${isUnavail ? '' : `
@@ -727,7 +743,7 @@ function changeQty(id, delta) {
 }
 
 function updateCartCount() {
-  const total = Object.values(cart).reduce((a,b) => a+b, 0);
+  const total = Object.values(cart).reduce((a, b) => a + b, 0);
   document.getElementById('cartCount').textContent = total;
 }
 
@@ -735,7 +751,9 @@ function toggleCart() {
   const sheet = document.getElementById('cartSheet');
   const overlay = document.getElementById('overlay');
   const isOpen = sheet.classList.contains('open');
+
   if (!isOpen) renderCart();
+
   sheet.classList.toggle('open');
   overlay.classList.toggle('visible');
 }
@@ -747,7 +765,7 @@ function renderCart() {
   errorBox.textContent = '';
 
   const allItems = MENU.flatMap(c => c.items);
-  const cartItems = Object.entries(cart).filter(([,q]) => q > 0);
+  const cartItems = Object.entries(cart).filter(([, q]) => q > 0);
 
   if (!cartItems.length) {
     content.innerHTML = `<div class="cart-empty">
@@ -763,17 +781,18 @@ function renderCart() {
     const item = allItems.find(i => i.id === id);
     const subtotal = item.price * qty;
     total += subtotal;
+
     return `<div class="cart-item">
       <div class="cart-item-name">${item.name}</div>
       <div class="cart-item-qty">×${qty}</div>
-      <div class="cart-item-price">${subtotal.toFixed(2).replace('.',',')} zł</div>
+      <div class="cart-item-price">${subtotal.toFixed(2).replace('.', ',')} zł</div>
       <button class="cart-remove" onclick="removeCartItem('${id}')">×</button>
     </div>`;
   }).join('');
 
   html += `<div class="cart-total">
     <span class="cart-total-label">Razem:</span>
-    <span class="cart-total-value">${total.toFixed(2).replace('.',',')} zł</span>
+    <span class="cart-total-value">${total.toFixed(2).replace('.', ',')} zł</span>
   </div>`;
 
   html += `
@@ -807,7 +826,7 @@ function renderCart() {
   content.innerHTML = html;
   content.insertAdjacentHTML(
     'beforeend',
-    `<button class="order-btn" onclick="submitOrder()">✅ Złóż zamówienie (${total.toFixed(2).replace('.',',')} zł)</button>`
+    `<button class="order-btn" onclick="submitOrder()">✅ Złóż zamówienie (${total.toFixed(2).replace('.', ',')} zł)</button>`
   );
 }
 
@@ -851,40 +870,90 @@ function removeCartItem(id) {
   renderCart();
 }
 
-function submitOrder() {
+async function submitOrder() {
   if (!Object.keys(cart).length) return;
   if (!validateCustomerData()) return;
 
   const allItems = MENU.flatMap(c => c.items);
-  const orderItems = Object.entries(cart).filter(([,q]) => q > 0).map(([id, qty]) => {
-    const item = allItems.find(i => i.id === id);
-    return { name: item.name, qty, price: item.price, subtotal: item.price * qty };
-  });
+
+  const orderItems = Object.entries(cart)
+    .filter(([, q]) => q > 0)
+    .map(([id, qty]) => {
+      const item = allItems.find(i => i.id === id);
+      return {
+        id,
+        name: item.name,
+        qty,
+        price: item.price,
+        subtotal: item.price * qty
+      };
+    });
+
   const total = orderItems.reduce((s, i) => s + i.subtotal, 0);
-  const order = {
-    id: Date.now(),
-    time: new Date().toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'}),
-    customer: {
-      name: customerName.trim(),
-      phone: normalizePhone(customerPhone)
-    },
-    items: orderItems,
-    total
+
+  const payload = {
+    name: customerName.trim(),
+    phone: normalizePhone(customerPhone),
+    items: {}
   };
-  orders.push(order);
-  localStorage.setItem('orders', JSON.stringify(orders));
-  cart = {};
-  customerName = '';
-  customerPhone = '';
-  updateCartCount();
-  renderMenu();
-  toggleCart();
-  showSuccess();
+
+  orderItems.forEach(item => {
+    payload.items[item.name + " / " + item.price.toFixed(0) + " zł"] = item.qty;
+  });
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Nie udało się zapisać zamówienia");
+    }
+
+    const order = {
+      id: Date.now(),
+      time: new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }),
+      customer: {
+        name: customerName.trim(),
+        phone: normalizePhone(customerPhone)
+      },
+      items: orderItems,
+      total
+    };
+
+    orders.push(order);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    cart = {};
+    customerName = '';
+    customerPhone = '';
+
+    updateCartCount();
+    renderMenu();
+    toggleCart();
+    showSuccess();
+
+  } catch (err) {
+    const errorBox = document.getElementById('cartError');
+    if (errorBox) {
+      errorBox.textContent = "Błąd wysyłki zamówienia: " + err.message;
+      errorBox.style.display = "block";
+    } else {
+      alert("Błąd wysyłki zamówienia: " + err.message);
+    }
+  }
 }
 
 function showSuccess() {
   document.getElementById('successScreen').classList.add('visible');
 }
+
 function hideSuccess() {
   document.getElementById('successScreen').classList.remove('visible');
 }
@@ -927,6 +996,7 @@ function checkAdmin() {
 function renderAdminPanel() {
   const todayOrders = orders;
   const totalRevenue = todayOrders.reduce((s, o) => s + o.total, 0);
+
   document.getElementById('statOrders').textContent = todayOrders.length;
   document.getElementById('statRevenue').textContent = totalRevenue.toFixed(2).replace('.', ',') + ' zł';
 
@@ -938,9 +1008,13 @@ function renderAdminPanel() {
       <div class="order-card">
         <div class="order-card-header">
           <span class="order-time">🕐 ${o.time}</span>
-          <span class="order-total-badge">${o.total.toFixed(2).replace('.',',')} zł</span>
+          <span class="order-total-badge">${o.total.toFixed(2).replace('.', ',')} zł</span>
         </div>
-        <div class="order-items"><strong>Klient:</strong> ${o.customer?.name || '-'}<br><strong>Telefon:</strong> ${o.customer?.phone || '-'}<br><br>${o.items.map(i => `${i.name} ×${i.qty}`).join('<br>')}</div>
+        <div class="order-items">
+          <strong>Klient:</strong> ${o.customer?.name || '-'}<br>
+          <strong>Telefon:</strong> ${o.customer?.phone || '-'}<br><br>
+          ${o.items.map(i => `${i.name} ×${i.qty}`).join('<br>')}
+        </div>
       </div>`).join('');
   }
 
