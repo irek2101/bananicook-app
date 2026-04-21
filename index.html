@@ -1025,13 +1025,13 @@ function showLogin(show) {
   document.getElementById('loginScreen').classList.toggle('hidden', !show);
 }
 
-function checkAdmin() {
+async function checkAdmin() {
   const pass = document.getElementById('adminPass').value;
   if (pass === ADMIN_PASSWORD) {
     isAdminLoggedIn = true;
     showLogin(false);
     switchPage('admin');
-    renderAdminPanel();
+    await renderAdminPanel();
   } else {
     document.getElementById('loginError').style.display = 'block';
   }
