@@ -908,6 +908,19 @@ async function submitOrder() {
   if (!Object.keys(cart).length) return;
   if (!validateCustomerData()) return;
 
+  const now = new Date();
+  const h = now.getHours();
+  const d = now.getDay();
+  const isWeekday = d >= 1 && d <= 5;
+  const isOpen = isWeekday && h >= 6 && h < 15;
+
+  if (!isOpen) {
+    const errorBox = document.getElementById('cartError');
+    errorBox.textContent = 'Formularz jest obecnie zamknięty. Zamówienia przyjmujemy od poniedziałku do piątku w godzinach 6:00–15:00.';
+    errorBox.style.display = 'block';
+    return;
+  }
+
   const allItems = MENU.flatMap(c => c.items);
 
   const orderItems = Object.entries(cart)
@@ -925,29 +938,27 @@ async function submitOrder() {
 
   const total = orderItems.reduce((s, i) => s + i.subtotal, 0);
 
-  const payload = {
-    name: customerName.trim(),
-    phone: normalizePhone(customerPhone),
-    items: {}
-  };
+  const params = new URLSearchParams();
+  params.append(FORM_FIELDS.name, customerName.trim());
+  params.append(FORM_FIELDS.phone, normalizePhone(customerPhone));
 
   orderItems.forEach(item => {
-    payload.items[item.name + " / " + item.price.toFixed(0) + " zł"] = item.qty;
+    const key = `${item.name} / ${item.price.toFixed(0)} zł`;
+    const fieldId = FORM_FIELDS.items[key];
+    if (fieldId) {
+      params.append(fieldId, String(item.qty));
+    }
   });
 
-  const response = await fetch(SCRIPT_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "text/plain;charset=utf-8"
-  },
-  body: JSON.stringify(payload)
-});
-
-    const result = await response.json();
-
-    if (!result.success) {
-      throw new Error(result.error || "Nie udało się zapisać zamówienia");
-    }
+  try {
+    await fetch(FORM_RESPONSE_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+      },
+      body: params.toString()
+    });
 
     const order = {
       id: Date.now(),
@@ -976,13 +987,12 @@ async function submitOrder() {
     const errorBox = document.getElementById('cartError');
     if (errorBox) {
       errorBox.textContent = "Błąd wysyłki zamówienia: " + err.message;
-      errorBox.style.display = "block";
+      errorBox.style.display = 'block';
     } else {
       alert("Błąd wysyłki zamówienia: " + err.message);
     }
   }
 }
-
 function showSuccess() {
   document.getElementById('successScreen').classList.add('visible');
 }
