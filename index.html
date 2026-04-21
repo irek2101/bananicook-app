@@ -1038,37 +1038,54 @@ function checkAdmin() {
 }
 
 // ── ADMIN PANEL ──
-function renderAdminPanel() {
-  const todayOrders = orders;
-  const totalRevenue = todayOrders.reduce((s, o) => s + o.total, 0);
-
-  document.getElementById('statOrders').textContent = todayOrders.length;
-  document.getElementById('statRevenue').textContent = totalRevenue.toFixed(2).replace('.', ',') + ' zł';
-
+async function renderAdminPanel() {
   const ordersEl = document.getElementById('adminOrders');
-  if (!todayOrders.length) {
-    ordersEl.innerHTML = '<div style="padding:16px;color:#888;font-size:13px;text-align:center;">Brak zamówień</div>';
-  } else {
-    ordersEl.innerHTML = [...todayOrders].reverse().map(o => `
-      <div class="order-card">
-        <div class="order-card-header">
-          <span class="order-time">🕐 ${o.time}</span>
-          <span class="order-total-badge">${o.total.toFixed(2).replace('.', ',')} zł</span>
-        </div>
-        <div class="order-items">
-          <strong>Klient:</strong> ${o.customer?.name || '-'}<br>
-          <strong>Telefon:</strong> ${o.customer?.phone || '-'}<br><br>
-          ${o.items.map(i => `${i.name} ×${i.qty}`).join('<br>')}
-        </div>
-      </div>`).join('');
-  }
+  ordersEl.innerHTML = '<div style="padding:16px;color:#888;font-size:13px;text-align:center;">Ładowanie...</div>';
 
-  const allItems = MENU.flatMap(c => c.items);
-  document.getElementById('adminToggleList').innerHTML = allItems.map(item => `
-    <div class="admin-toggle-item">
-      <span class="toggle-name">${item.name}</span>
-      <div class="toggle-switch ${unavailable[item.id] ? '' : 'on'}" onclick="toggleAvailability('${item.id}', this)"></div>
-    </div>`).join('');
+  try {
+    const response = await fetch(ADMIN_API_URL);
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || 'Nie udało się pobrać zamówień');
+    }
+
+    const todayOrders = data.orders || [];
+    const totalRevenue = todayOrders.reduce((s, o) => s + (o.total || 0), 0);
+
+    document.getElementById('statOrders').textContent = todayOrders.length;
+    document.getElementById('statRevenue').textContent = totalRevenue.toFixed(2).replace('.', ',') + ' zł';
+
+    if (!todayOrders.length) {
+      ordersEl.innerHTML = '<div style="padding:16px;color:#888;font-size:13px;text-align:center;">Brak zamówień</div>';
+    } else {
+      ordersEl.innerHTML = todayOrders.map(o => `
+        <div class="order-card">
+          <div class="order-card-header">
+            <span class="order-time">🕐 ${o.time || '-'}</span>
+            <span class="order-total-badge">${(o.total || 0).toFixed(2).replace('.', ',')} zł</span>
+          </div>
+          <div class="order-items">
+            <strong>Klient:</strong> ${o.customer?.name || '-'}<br>
+            <strong>Telefon:</strong> ${o.customer?.phone || '-'}<br><br>
+            ${(o.items || []).map(i => `${i.name} ×${i.qty}`).join('<br>')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    const allItems = MENU.flatMap(c => c.items);
+    document.getElementById('adminToggleList').innerHTML = allItems.map(item => `
+      <div class="admin-toggle-item">
+        <span class="toggle-name">${item.name}</span>
+        <div class="toggle-switch ${unavailable[item.id] ? '' : 'on'}" onclick="toggleAvailability('${item.id}', this)"></div>
+      </div>`).join('');
+
+  } catch (err) {
+    document.getElementById('statOrders').textContent = '0';
+    document.getElementById('statRevenue').textContent = '0 zł';
+    ordersEl.innerHTML = `<div style="padding:16px;color:#c62828;font-size:13px;text-align:center;">Błąd pobierania zamówień: ${err.message}</div>`;
+  }
 }
 
 function toggleAvailability(id, el) {
