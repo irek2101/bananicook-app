@@ -527,7 +527,41 @@
 // ── DATA ──
 const ADMIN_PASSWORD = "bananicook2024"; // TODO: przenieść do backendu / Apps Script
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeSRtRmvbwixXIng31EKl2W_rFo5Bh73vsBZrta_ijfVgbaEA/viewform";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_MRzjoEHz3QDCeyTHSF4MFLuOf7EFA7AlAOWiySzkItr80A0ZaPknEKnec4rM5hGS/exec";
+
+const FORM_RESPONSE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeSRtRmvbwixXIng31EKl2W_rFo5Bh73vsBZrta_ijfVgbaEA/formResponse";
+
+const FORM_FIELDS = {
+  name: "entry.103938650",
+  phone: "entry.858391203",
+  items: {
+    "Pierogi z serem i ziemniakami 6 szt. 400 g / 21 zł": "entry.140446168",
+    "Pierogi ze szpinakiem i serem 6 szt. 400 g / 23 zł": "entry.240580028",
+    "Pierogi z kapustą i grzybami leśnymi 6 szt. 400 g / 25 zł": "entry.1325303077",
+    "Pierogi z wędzonym łososiem, ziemniakami i ricottą 6 szt. 400 g / 25 zł": "entry.963343471",
+    "Pierogi z mięsem 6 szt. 400 g / 23 zł": "entry.1678763787",
+    "Pielmieni wołowo-wieprzowe 12 szt. 400 g / 25 zł": "entry.980530101",
+    "Pierogi ze świeżymi truskawkami 7 szt. 400 g / 21 zł": "entry.428936896",
+    "Pierogi z twarogiem na słodko 6 szt. 400 g / 21 zł": "entry.1763252949",
+    "Pierogi ze szpinakiem i serem smażone w panko 5 szt. / 23 zł": "entry.1673076384",
+    "Pierogi z pieczarkami i ziemniakami smażone w panko 5 szt. / 23 zł": "entry.1061692995",
+    "Pierogi z mięsem smażone w panko 5 szt. / 23 zł": "entry.1600193755",
+    "Gołąbki mięsne 1 szt. + sos pomidorowy 300 g / 15 zł": "entry.725944068",
+    "Pyzy z mięsem smażone w panko 4 szt. 450 g / 25 zł": "entry.1150049563",
+    "Krokiety z kapustą i grzybami 2 szt. / 20 zł": "entry.1376753743",
+    "Krokiety z mięsem 2 szt. / 20 zł": "entry.1741792288",
+    "Krokiety z pieczarkami, ziemniakami i serem cheddar 2 szt. / 20 zł": "entry.999137204",
+    "Naleśniki z twarogiem na słodko 2 szt. / 17 zł": "entry.171604413",
+    "Naleśniki z pieczarkami, serem cheddar i ziemniakami 2 szt. / 19 zł": "entry.897771362",
+    "Kefir Robico naturalny / 5 zł": "entry.2039289405",
+    "Sok Naturalvia jabłko-mango 300 ml / 9 zł": "entry.433448889",
+    "Sok Naturalvia jabłko i pomarańcza 300 ml / 8 zł": "entry.513165570",
+    "Sok Naturalvia jabłko i gruszka 300 ml / 8 zł": "entry.357930742",
+    "Sok Naturalvia jabłko i truskawka 300 ml / 8 zł": "entry.1689716936",
+    "Naturalvia jabłko-marchew 300 ml / 8 zł": "entry.804945672",
+    "Sok Naturalvia ananasowy 300 ml / 9 zł": "entry.854957240",
+    "Sok Naturalvia jabłko i czarna porzeczka 300 ml / 8 zł": "entry.1811419088"
+  }
+};
 
 const MENU = [
   {
