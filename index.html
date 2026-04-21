@@ -1011,10 +1011,10 @@ function switchPage(page) {
   document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('primary');
 }
 
-function goAdmin() {
+async function goAdmin() {
   if (isAdminLoggedIn) {
     switchPage('admin');
-    renderAdminPanel();
+    await renderAdminPanel();
   } else {
     showLogin(true);
   }
