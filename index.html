@@ -642,6 +642,8 @@ let isAdminLoggedIn = false;
 let deferredInstallPrompt = null;
 let customerName = '';
 let customerPhone = '';
+let adminRefreshTimer = null;
+
 
 // ── INIT ──
 window.addEventListener('load', () => {
@@ -1007,14 +1009,24 @@ function switchPage(page) {
   document.getElementById(page + 'Page').classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('primary'));
   document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('primary');
+
+  if (page === 'admin' && isAdminLoggedIn) {
+    startAdminAutoRefresh();
+  } else {
+    stopAdminAutoRefresh();
+  }
 }
 
-async function goAdmin() {
-  if (isAdminLoggedIn) {
+async function checkAdmin() {
+  const pass = document.getElementById('adminPass').value;
+  if (pass === ADMIN_PASSWORD) {
+    isAdminLoggedIn = true;
+    showLogin(false);
     switchPage('admin');
     await renderAdminPanel();
+    startAdminAutoRefresh();
   } else {
-    showLogin(true);
+    document.getElementById('loginError').style.display = 'block';
   }
 }
 
@@ -1083,6 +1095,21 @@ async function renderAdminPanel() {
     document.getElementById('statOrders').textContent = '0';
     document.getElementById('statRevenue').textContent = '0 zł';
     ordersEl.innerHTML = `<div style="padding:16px;color:#c62828;font-size:13px;text-align:center;">Błąd pobierania zamówień: ${err.message}</div>`;
+  }
+}
+function startAdminAutoRefresh() {
+  stopAdminAutoRefresh();
+  adminRefreshTimer = setInterval(() => {
+    if (isAdminLoggedIn && document.getElementById('adminPage').classList.contains('active')) {
+      renderAdminPanel();
+    }
+  }, 10000);
+}
+
+function stopAdminAutoRefresh() {
+  if (adminRefreshTimer) {
+    clearInterval(adminRefreshTimer);
+    adminRefreshTimer = null;
   }
 }
 
