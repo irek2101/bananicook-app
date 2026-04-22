@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bananicook-v4';
+const CACHE_NAME = 'bananicook-v6';
 
 const STATIC_ASSETS = [
   './',
