@@ -498,39 +498,9 @@
 const ADMIN_PASSWORD = "bananicook2024";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_MRzjoEHz3QDCeyTHSF4MFLuOf7EFA7AlAOWiySzkItr80A0ZaPknEKnec4rM5hGS/exec";
 const ADMIN_API_URL = "https://script.google.com/macros/s/AKfycbx_MRzjoEHz3QDCeyTHSF4MFLuOf7EFA7AlAOWiySzkItr80A0ZaPknEKnec4rM5hGS/exec?action=orders&today=1";
+const AVAILABILITY_API_URL = "https://script.google.com/macros/s/AKfycbx_MRzjoEHz3QDCeyTHSF4MFLuOf7EFA7AlAOWiySzkItr80A0ZaPknEKnec4rM5hGS/exec?action=availability";
 
-const FORM_FIELDS = {
-  name: "entry.103938650",
-  phone: "entry.858391203",
-  items: {
-    "Pierogi z serem i ziemniakami 6 szt. 400 g / 21 zł": "entry.140446168",
-    "Pierogi ze szpinakiem i serem 6 szt. 400 g / 23 zł": "entry.240580028",
-    "Pierogi z kapustą i grzybami leśnymi 6 szt. 400 g / 25 zł": "entry.1325303077",
-    "Pierogi z wędzonym łososiem, ziemniakami i ricottą 6 szt. 400 g / 25 zł": "entry.963343471",
-    "Pierogi z mięsem 6 szt. 400 g / 23 zł": "entry.1678763787",
-    "Pielmieni wołowo-wieprzowe 12 szt. 400 g / 25 zł": "entry.980530101",
-    "Pierogi ze świeżymi truskawkami 7 szt. 400 g / 21 zł": "entry.428936896",
-    "Pierogi z twarogiem na słodko 6 szt. 400 g / 21 zł": "entry.1763252949",
-    "Pierogi ze szpinakiem i serem smażone w panko 5 szt. / 23 zł": "entry.1673076384",
-    "Pierogi z pieczarkami i ziemniakami smażone w panko 5 szt. / 23 zł": "entry.1061692995",
-    "Pierogi z mięsem smażone w panko 5 szt. / 23 zł": "entry.1600193755",
-    "Gołąbki mięsne 1 szt. + sos pomidorowy 300 g / 15 zł": "entry.725944068",
-    "Pyzy z mięsem smażone w panko 4 szt. 450 g / 25 zł": "entry.1150049563",
-    "Krokiety z kapustą i grzybami 2 szt. / 20 zł": "entry.1376753743",
-    "Krokiety z mięsem 2 szt. / 20 zł": "entry.1741792288",
-    "Krokiety z pieczarkami, ziemniakami i serem cheddar 2 szt. / 20 zł": "entry.999137204",
-    "Naleśniki z twarogiem na słodko 2 szt. / 17 zł": "entry.171604413",
-    "Naleśniki z pieczarkami, serem cheddar i ziemniakami 2 szt. / 19 zł": "entry.897771362",
-    "Kefir Robico naturalny / 5 zł": "entry.2039289405",
-    "Sok Naturalvia jabłko-mango 300 ml / 9 zł": "entry.433448889",
-    "Sok Naturalvia jabłko i pomarańcza 300 ml / 8 zł": "entry.513165570",
-    "Sok Naturalvia jabłko i gruszka 300 ml / 8 zł": "entry.357930742",
-    "Sok Naturalvia jabłko i truskawka 300 ml / 8 zł": "entry.1689716936",
-    "Naturalvia jabłko-marchew 300 ml / 8 zł": "entry.804945672",
-    "Sok Naturalvia ananasowy 300 ml / 9 zł": "entry.854957240",
-    "Sok Naturalvia jabłko i czarna porzeczka 300 ml / 8 zł": "entry.1811419088"
-  }
-};
+
 
 const MENU = [
   {
@@ -604,7 +574,7 @@ const MENU = [
 ];
 
 let cart = {};
-let unavailable = JSON.parse(localStorage.getItem('unavailable') || '{}');
+let unavailable = {};
 let isAdminLoggedIn = false;
 let deferredInstallPrompt = null;
 let customerName = '';
@@ -618,9 +588,11 @@ window.addEventListener('load', () => {
 
   renderMenu();
   renderTabs();
+  loadAvailability();
   updateStatus();
   updateCartCount();
   setInterval(updateStatus, 60000);
+  setInterval(loadAvailability, 30000);
 
   document.getElementById('adminDate').textContent = new Date().toLocaleDateString('pl-PL', {
     weekday: 'long',
@@ -645,6 +617,34 @@ function installApp() {
       document.getElementById('installBanner').classList.remove('show');
       localStorage.setItem('installDismissed', '1');
     });
+  }
+}
+
+async function loadAvailability() {
+  try {
+    const response = await fetch(AVAILABILITY_API_URL, { cache: 'no-store' });
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || 'Nie udało się pobrać dostępności');
+    }
+
+    const availability = data.availability || {};
+    unavailable = {};
+
+    Object.keys(availability).forEach(id => {
+      if (availability[id] === false) {
+        unavailable[id] = true;
+      }
+    });
+
+    renderMenu();
+
+    if (document.getElementById('adminPage').classList.contains('active') && isAdminLoggedIn) {
+      renderAdminPanel();
+    }
+  } catch (err) {
+    console.error('Błąd pobierania dostępności:', err);
   }
 }
 
@@ -1069,15 +1069,40 @@ async function renderAdminPanel() {
   }
 }
 
-function toggleAvailability(id, el) {
-  el.classList.toggle('on');
-  if (el.classList.contains('on')) {
-    delete unavailable[id];
-  } else {
-    unavailable[id] = true;
+async function toggleAvailability(id, el) {
+  const willBeAvailable = !el.classList.contains('on');
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({
+        action: "setAvailability",
+        itemId: id,
+        available: willBeAvailable
+      })
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Nie udało się zapisać dostępności");
+    }
+
+    if (willBeAvailable) {
+      delete unavailable[id];
+    } else {
+      unavailable[id] = true;
+    }
+
+    renderMenu();
+    await renderAdminPanel();
+
+  } catch (err) {
+    alert("Błąd zmiany dostępności: " + err.message);
   }
-  localStorage.setItem('unavailable', JSON.stringify(unavailable));
-  renderMenu();
 }
 </script>
 
