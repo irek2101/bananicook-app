@@ -965,6 +965,178 @@
     .scrollable-page {
       overflow-y: auto;
     }
+    .info-section {
+  margin: 8px 16px 110px;
+}
+
+.info-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.info-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 10px;
+}
+
+.info-subtitle {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.social-btn:active {
+  transform: scale(0.98);
+}
+
+.social-btn.facebook {
+  background: #1877F2;
+  color: white;
+}
+
+.social-btn.instagram {
+  background: linear-gradient(135deg, #F58529, #DD2A7B, #8134AF, #515BD4);
+  color: white;
+}
+
+.social-btn.phone {
+  background: var(--green-dark);
+  color: white;
+}
+
+.social-btn.ai {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.ai-bubble {
+  position: fixed;
+  right: 16px;
+  bottom: 88px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  background: var(--green-dark);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(27,94,32,0.28);
+  z-index: 130;
+}
+
+.ai-bubble:active {
+  transform: scale(0.96);
+}
+
+.ai-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 400;
+}
+
+.ai-modal.visible {
+  display: flex;
+}
+
+.ai-window {
+  width: 100%;
+  max-width: 460px;
+  background: white;
+  border-radius: 22px 22px 0 0;
+  padding: 16px 16px 24px;
+  max-height: 82vh;
+  overflow-y: auto;
+}
+
+.ai-window-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 8px;
+}
+
+.ai-window-subtitle {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.ai-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ai-chip {
+  border: 1px solid var(--border);
+  background: var(--green-ultra);
+  color: var(--green-dark);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ai-answer {
+  background: #F8FBF7;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.ai-close {
+  margin-top: 14px;
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--green-dark);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
@@ -1008,10 +1180,37 @@
   </div>
 
   <div class="page active scrollable-page" id="menuPage">
-    <div id="statusBanner"></div>
-    <div class="tabs" id="categoryTabs"></div>
-    <main id="menuContent"></main>
+  <div id="statusBanner"></div>
+  <div class="tabs" id="categoryTabs"></div>
+  <main id="menuContent"></main>
+
+  <div class="info-section">
+    <div class="info-card">
+      <div class="info-title">Kontakt i social media</div>
+      <div class="info-subtitle">
+        Obserwuj Bananicook w mediach społecznościowych i bądź na bieżąco z nowościami oraz promocjami.
+      </div>
+
+      <div class="social-grid">
+        <a class="social-btn facebook" href="https://www.facebook.com/Bananicook/" target="_blank" rel="noopener noreferrer">
+          📘 Facebook
+        </a>
+
+        <a class="social-btn instagram" href="https://www.instagram.com/bananicook" target="_blank" rel="noopener noreferrer">
+          📷 Instagram
+        </a>
+
+        <a class="social-btn phone" href="tel:698443958">
+          📞 Zadzwoń
+        </a>
+
+        <button class="social-btn ai" onclick="openAiAssistant()">
+          🤖 Asystent AI
+        </button>
+      </div>
+    </div>
   </div>
+</div>
 
   <div class="page" id="adminPage">
     <div class="admin-panel visible" id="adminContent">
@@ -1058,6 +1257,31 @@
   <div class="bottom-nav">
     <button class="nav-btn secondary" id="navMenu" onclick="switchPage('menu')">🍽️ Menu</button>
     <button class="nav-btn secondary" id="navAdmin" onclick="goAdmin()">⚙️ Panel</button>
+  </div>
+</div>
+
+  <button class="ai-bubble" onclick="openAiAssistant()">🤖</button>
+
+<div class="ai-modal" id="aiModal" onclick="closeAiAssistant(event)">
+  <div class="ai-window" onclick="event.stopPropagation()">
+    <div class="ai-window-title">Asystent Bananicook</div>
+    <div class="ai-window-subtitle">
+      Mogę pomóc w podstawowych pytaniach o zamówienia, godziny, kontakt i social media.
+    </div>
+
+    <div class="ai-chip-list">
+      <button class="ai-chip" onclick="askAi('godziny')">Godziny zamówień</button>
+      <button class="ai-chip" onclick="askAi('kontakt')">Kontakt</button>
+      <button class="ai-chip" onclick="askAi('social')">Social media</button>
+      <button class="ai-chip" onclick="askAi('jak_zamowic')">Jak zamówić?</button>
+      <button class="ai-chip" onclick="askAi('menu')">Co znajdę w menu?</button>
+    </div>
+
+    <div class="ai-answer" id="aiAnswer">
+      Cześć! Jestem prostym asystentem Bananicook. Wybierz jedno z pytań powyżej.
+    </div>
+
+    <button class="ai-close" onclick="closeAiAssistant()">Zamknij</button>
   </div>
 </div>
 
@@ -1542,6 +1766,30 @@ function showSuccess() {
 
 function hideSuccess() {
   document.getElementById('successScreen').classList.remove('visible');
+}
+
+function openAiAssistant() {
+  document.getElementById('aiModal').classList.add('visible');
+}
+
+function closeAiAssistant(event) {
+  if (!event || event.target.id === 'aiModal') {
+    document.getElementById('aiModal').classList.remove('visible');
+  }
+}
+
+function askAi(topic) {
+  const box = document.getElementById('aiAnswer');
+
+  const answers = {
+    godziny: 'Zamówienia przyjmujemy od poniedziałku do piątku w godzinach 6:00–15:00.',
+    kontakt: 'Możesz skontaktować się telefonicznie pod numerem 698 443 958.',
+    social: 'Znajdziesz nas na Facebooku i Instagramie jako Bananicook. Linki są dostępne w sekcji Kontakt i social media.',
+    jak_zamowic: 'Wybierz produkty z menu, dodaj ilości, przejdź do koszyka, podaj imię i numer telefonu, a następnie złóż zamówienie.',
+    menu: 'W menu znajdziesz m.in. pierogi gotowane, pierogi smażone w panko, gołąbki, pyzy, krokiety, naleśniki i napoje.'
+  };
+
+  box.textContent = answers[topic] || 'Przepraszam, nie mam jeszcze odpowiedzi na to pytanie.';
 }
 
 function startAdminAutoRefresh() {
