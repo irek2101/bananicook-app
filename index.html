@@ -1391,7 +1391,7 @@ function renderCart() {
         type="tel"
         id="customerPhone"
         class="checkout-input"
-        placeholder="Np. 605767730"
+        placeholder="Wpisz numer telefonu"
         value="${escapeHtml(customerPhone)}"
         oninput="customerPhone=this.value"
       >
@@ -1653,7 +1653,7 @@ async function renderAdminPanel() {
 }
 
 async function clearTodayOrdersByPhone() {
-  const targetPhone = prompt("Podaj numer telefonu, dla którego usunąć dzisiejsze zamówienia:", "605767730");
+  const targetPhone = prompt("Podaj numer telefonu, dla którego usunąć dzisiejsze zamówienia:", "");
   if (!targetPhone || !targetPhone.trim()) return;
 
   const normalizedPhone = normalizePhone(targetPhone);
