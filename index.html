@@ -701,6 +701,11 @@
       color: #fff;
     }
 
+    .admin-action-btn.logout {
+      background: #455A64;
+      color: #fff;
+    }
+
     .order-card {
       background: white;
       border-radius: var(--radius-sm);
@@ -965,270 +970,243 @@
     .scrollable-page {
       overflow-y: auto;
     }
+
     .info-section {
-  margin: 8px 16px 110px;
-}
+      margin: 8px 16px 110px;
+    }
 
-.info-card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: var(--shadow);
-}
+    .info-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
 
-.info-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--green-dark);
-  margin-bottom: 10px;
-}
+    .info-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 10px;
+    }
 
-.info-subtitle {
-  font-size: 13px;
-  color: var(--text-light);
-  margin-bottom: 14px;
-  line-height: 1.5;
-}
+    .info-subtitle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
 
-.social-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
+    .social-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
 
-.social-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  text-decoration: none;
-  border: none;
-  border-radius: 14px;
-  padding: 14px 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.18s ease, opacity 0.18s ease;
-}
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
 
-.social-btn:active {
-  transform: scale(0.98);
-}
+    .social-btn:active {
+      transform: scale(0.98);
+    }
 
-.social-btn.facebook {
-  background: #1877F2;
-  color: white;
-}
+    .social-btn.facebook {
+      background: #1877F2;
+      color: white;
+    }
 
-.social-btn.instagram {
-  background: linear-gradient(135deg, #F58529, #DD2A7B, #8134AF, #515BD4);
-  color: white;
-}
+    .social-btn.instagram {
+      background: linear-gradient(135deg, #F58529, #DD2A7B, #8134AF, #515BD4);
+      color: white;
+    }
 
-.social-btn.phone {
-  background: var(--green-dark);
-  color: white;
-}
+    .social-btn.phone {
+      background: var(--green-dark);
+      color: white;
+    }
 
-.social-btn.ai {
-  background: #FFF3E0;
-  color: #E65100;
-}
+    .social-btn.ai {
+      background: #FFF3E0;
+      color: #E65100;
+    }
 
-.ai-bubble {
-  position: fixed;
-  right: 16px;
-  bottom: 88px;
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  border: none;
-  background: var(--green-dark);
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(27,94,32,0.28);
-  z-index: 130;
-}
+    .ai-bubble {
+      position: fixed;
+      right: 16px;
+      bottom: 88px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--green-dark);
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(27,94,32,0.28);
+      z-index: 130;
+    }
 
-.ai-bubble:active {
-  transform: scale(0.96);
-}
+    .ai-bubble:active {
+      transform: scale(0.96);
+    }
 
-.ai-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 400;
-}
+    .ai-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 400;
+    }
 
-.ai-modal.visible {
-  display: flex;
-}
+    .ai-modal.visible {
+      display: flex;
+    }
 
-.ai-window {
-  width: 100%;
-  max-width: 460px;
-  background: white;
-  border-radius: 22px 22px 0 0;
-  padding: 16px 16px 24px;
-  max-height: 82vh;
-  overflow-y: auto;
-}
+    .ai-window {
+      width: 100%;
+      max-width: 460px;
+      background: white;
+      border-radius: 22px 22px 0 0;
+      padding: 16px 16px 24px;
+      max-height: 82vh;
+      overflow-y: auto;
+    }
 
-.ai-window-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--green-dark);
-  margin-bottom: 8px;
-}
+    .ai-window-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 8px;
+    }
 
-.ai-window-subtitle {
-  font-size: 13px;
-  color: var(--text-light);
-  margin-bottom: 14px;
-  line-height: 1.5;
-}
+    .ai-window-subtitle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
 
-.ai-chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
+    .ai-close {
+      margin-top: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      background: var(--green-dark);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-.ai-chip {
-  border: 1px solid var(--border);
-  background: var(--green-ultra);
-  color: var(--green-dark);
-  border-radius: 999px;
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
 
-.ai-answer {
-  background: #F8FBF7;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text);
-}
+    .chat-msg {
+      max-width: 86%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
 
-.ai-close {
-  margin-top: 14px;
-  width: 100%;
-  border: none;
-  border-radius: 14px;
-  padding: 14px;
-  background: var(--green-dark);
-  color: white;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
+    .chat-msg.user {
+      align-self: flex-end;
+      background: var(--green-dark);
+      color: white;
+    }
 
-.chat-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 14px;
-  max-height: 320px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
+    .chat-msg.bot {
+      align-self: flex-start;
+      background: #F8FBF7;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
 
-.chat-msg {
-  max-width: 86%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  font-size: 14px;
-  line-height: 1.5;
-  word-wrap: break-word;
-}
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
 
-.chat-msg.user {
-  align-self: flex-end;
-  background: var(--green-dark);
-  color: white;
-}
+    .chat-input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+    }
 
-.chat-msg.bot {
-  align-self: flex-start;
-  background: #F8FBF7;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
+    .chat-input:focus {
+      border-color: var(--green-mid);
+    }
 
-.chat-input-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-}
+    .chat-send {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      background: var(--green-dark);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
 
-.chat-input {
-  flex: 1;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 12px 14px;
-  font-size: 14px;
-  outline: none;
-  font-family: 'DM Sans', sans-serif;
-}
+    .chat-send:active {
+      transform: scale(0.98);
+    }
 
-.chat-input:focus {
-  border-color: var(--green-mid);
-}
+    .chat-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
 
-.chat-send {
-  border: none;
-  border-radius: 14px;
-  padding: 12px 16px;
-  background: var(--green-dark);
-  color: white;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-}
+    .chat-action-btn {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--green-dark);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-.chat-send:active {
-  transform: scale(0.98);
-}
-
-.chat-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.chat-action-btn {
-  border: 1px solid var(--border);
-  background: white;
-  color: var(--green-dark);
-  border-radius: 999px;
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.chat-action-btn.primary {
-  background: var(--green-dark);
-  color: white;
-  border-color: var(--green-dark);
-}
+    .chat-action-btn.primary {
+      background: var(--green-dark);
+      color: white;
+      border-color: var(--green-dark);
+    }
   </style>
 </head>
 <body>
@@ -1272,37 +1250,37 @@
   </div>
 
   <div class="page active scrollable-page" id="menuPage">
-  <div id="statusBanner"></div>
-  <div class="tabs" id="categoryTabs"></div>
-  <main id="menuContent"></main>
+    <div id="statusBanner"></div>
+    <div class="tabs" id="categoryTabs"></div>
+    <main id="menuContent"></main>
 
-  <div class="info-section">
-    <div class="info-card">
-      <div class="info-title">Kontakt i social media</div>
-      <div class="info-subtitle">
-        Obserwuj Bananicook w mediach społecznościowych i bądź na bieżąco z nowościami oraz promocjami.
-      </div>
+    <div class="info-section">
+      <div class="info-card">
+        <div class="info-title">Kontakt i social media</div>
+        <div class="info-subtitle">
+          Obserwuj Bananicook w mediach społecznościowych i bądź na bieżąco z nowościami oraz promocjami.
+        </div>
 
-      <div class="social-grid">
-        <a class="social-btn facebook" href="https://www.facebook.com/Bananicook/" target="_blank" rel="noopener noreferrer">
-          📘 Facebook
-        </a>
+        <div class="social-grid">
+          <a class="social-btn facebook" href="https://www.facebook.com/Bananicook/" target="_blank" rel="noopener noreferrer">
+            📘 Facebook
+          </a>
 
-        <a class="social-btn instagram" href="https://www.instagram.com/bananicook" target="_blank" rel="noopener noreferrer">
-          📷 Instagram
-        </a>
+          <a class="social-btn instagram" href="https://www.instagram.com/bananicook" target="_blank" rel="noopener noreferrer">
+            📷 Instagram
+          </a>
 
-        <a class="social-btn phone" href="tel:698443958">
-          📞 Zadzwoń
-        </a>
+          <a class="social-btn phone" href="tel:698443958">
+            📞 Zadzwoń
+          </a>
 
-        <button class="social-btn ai" onclick="openAiAssistant()">
-          🤖 Asystent AI
-        </button>
+          <button class="social-btn ai" onclick="openAiAssistant()">
+            🤖 Asystent AI
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <div class="page" id="adminPage">
     <div class="admin-panel visible" id="adminContent">
@@ -1341,6 +1319,9 @@
           <button class="admin-action-btn delete" onclick="clearTodayOrdersByPhone()">
             🗑️ Usuń dzisiejsze zamówienia dla numeru telefonu
           </button>
+          <button class="admin-action-btn logout" onclick="logoutAdmin()">
+            🚪 Wyloguj admina
+          </button>
         </div>
       </div>
     </div>
@@ -1351,8 +1332,6 @@
     <button class="nav-btn secondary" id="navAdmin" onclick="goAdmin()">⚙️ Panel</button>
   </div>
 </div>
-
-  <button class="ai-bubble" onclick="openAiAssistant()">🤖</button>
 
 <button class="ai-bubble" onclick="openAiAssistant()">🤖</button>
 
@@ -1407,7 +1386,6 @@
 </div>
 
 <script>
-const ADMIN_PASSWORD = "bananicook2024";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_MRzjoEHz3QDCeyTHSF4MFLuOf7EFA7AlAOWiySzkItr80A0ZaPknEKnec4rM5hGS/exec";
 const ADMIN_API_URL = "https://script.google.com/macros/s/AKfycbx_MRzjoEHz3QDCeyTHSF4MFLuOf7EFA7AlAOWiySzkItr80A0ZaPknEKnec4rM5hGS/exec?action=orders&today=1";
 const AVAILABILITY_API_URL = "https://script.google.com/macros/s/AKfycbx_MRzjoEHz3QDCeyTHSF4MFLuOf7EFA7AlAOWiySzkItr80A0ZaPknEKnec4rM5hGS/exec?action=availability";
@@ -1490,11 +1468,16 @@ let deferredInstallPrompt = null;
 let customerName = '';
 let customerPhone = '';
 let adminRefreshTimer = null;
+let adminToken = sessionStorage.getItem('adminToken') || '';
 
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('splash').classList.add('hidden');
   }, 1800);
+
+  if (adminToken) {
+    isAdminLoggedIn = true;
+  }
 
   renderMenu();
   renderTabs();
@@ -2100,12 +2083,8 @@ function findBestMenuItemMatch(message) {
 
 function addItemToCartFromAi(itemId, qty) {
   cart[itemId] = (cart[itemId] || 0) + qty;
-
   const qtyEl = document.getElementById('qty-' + itemId);
-  if (qtyEl) {
-    qtyEl.textContent = cart[itemId];
-  }
-
+  if (qtyEl) qtyEl.textContent = cart[itemId];
   updateCartCount();
   addChatMessage(`Dodałem do koszyka: <strong>${qty} ×</strong>. Możesz teraz otworzyć koszyk.`, 'bot');
 }
@@ -2140,6 +2119,10 @@ function switchPage(page) {
 }
 
 async function goAdmin() {
+  if (adminToken) {
+    isAdminLoggedIn = true;
+  }
+
   if (isAdminLoggedIn) {
     switchPage('admin');
     await renderAdminPanel();
@@ -2155,16 +2138,48 @@ function showLogin(show) {
 
 async function checkAdmin() {
   const pass = document.getElementById('adminPass').value;
-  if (pass === ADMIN_PASSWORD) {
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({
+        action: "adminLogin",
+        password: pass
+      })
+    });
+
+    const result = await response.json();
+
+    if (!result.success || !result.token) {
+      document.getElementById('loginError').style.display = 'block';
+      return;
+    }
+
+    adminToken = result.token;
+    sessionStorage.setItem('adminToken', adminToken);
+
     isAdminLoggedIn = true;
     document.getElementById('loginError').style.display = 'none';
+    document.getElementById('adminPass').value = '';
     showLogin(false);
     switchPage('admin');
     await renderAdminPanel();
     startAdminAutoRefresh();
-  } else {
+
+  } catch (err) {
     document.getElementById('loginError').style.display = 'block';
   }
+}
+
+function logoutAdmin() {
+  adminToken = '';
+  isAdminLoggedIn = false;
+  sessionStorage.removeItem('adminToken');
+  stopAdminAutoRefresh();
+  switchPage('menu');
 }
 
 async function renderAdminPanel() {
@@ -2234,7 +2249,8 @@ async function clearTodayOrdersByPhone() {
       },
       body: JSON.stringify({
         action: "clearTodayOrdersByPhone",
-        phone: normalizedPhone
+        phone: normalizedPhone,
+        adminToken: adminToken
       })
     });
 
@@ -2264,7 +2280,8 @@ async function toggleAvailability(id, el) {
       body: JSON.stringify({
         action: "setAvailability",
         itemId: id,
-        available: willBeAvailable
+        available: willBeAvailable,
+        adminToken: adminToken
       })
     });
 
