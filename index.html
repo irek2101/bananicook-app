@@ -1069,6 +1069,40 @@ async function renderAdminPanel() {
   }
 }
 
+async function clearTodayOrdersByPhone() {
+  const targetPhone = prompt("Podaj numer telefonu, dla którego usunąć dzisiejsze zamówienia:", "605767730");
+  if (!targetPhone || !targetPhone.trim()) return;
+
+  const normalizedPhone = normalizePhone(targetPhone);
+
+  const confirmed = confirm(`Czy na pewno usunąć dzisiejsze zamówienia dla numeru: ${normalizedPhone} ?`);
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({
+        action: "clearTodayOrdersByPhone",
+        phone: normalizedPhone
+      })
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Nie udało się usunąć zamówień");
+    }
+
+    alert(`Usunięto dzisiejsze zamówienia dla numeru ${normalizedPhone}: ${result.deleted || 0}`);
+    await renderAdminPanel();
+
+  } catch (err) {
+    alert("Błąd usuwania zamówień: " + err.message);
+  }
+}
 async function toggleAvailability(id, el) {
   const willBeAvailable = !el.classList.contains('on');
 
