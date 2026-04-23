@@ -467,15 +467,17 @@
         <div id="adminToggleList"></div>
       </div>
 
-      <button class="order-btn" onclick="renderAdminPanel()" style="background:#2E7D32;margin:0 0 16px;">
-        🔄 Odśwież zamówienia
-      </button>
-    </div>
+      <div class="admin-section">
+  <div class="admin-section-title">Akcje administracyjne</div>
+  <div class="admin-actions">
+    <button class="admin-action-btn refresh" onclick="renderAdminPanel()">
+      🔄 Odśwież zamówienia
+    </button>
+    <button class="admin-action-btn delete" onclick="clearTodayOrdersByPhone()">
+      🗑️ Usuń dzisiejsze zamówienia dla numeru telefonu
+    </button>
   </div>
-
-     <button class="order-btn" onclick="clearTodayOrdersByPhone()" style="background:#C62828;margin:0 0 16px;">
-       🗑️ Usuń dzisiejsze zamówienia dla numeru telefonu
-     </button>
+</div>
 
   <div class="bottom-nav">
     <button class="nav-btn secondary" id="navMenu" onclick="switchPage('menu')">🍽️ Menu</button>
