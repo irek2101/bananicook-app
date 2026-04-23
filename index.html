@@ -1137,6 +1137,98 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.chat-msg {
+  max-width: 86%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.chat-msg.user {
+  align-self: flex-end;
+  background: var(--green-dark);
+  color: white;
+}
+
+.chat-msg.bot {
+  align-self: flex-start;
+  background: #F8FBF7;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chat-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 14px;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.chat-input:focus {
+  border-color: var(--green-mid);
+}
+
+.chat-send {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: var(--green-dark);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chat-send:active {
+  transform: scale(0.98);
+}
+
+.chat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chat-action-btn {
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--green-dark);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chat-action-btn.primary {
+  background: var(--green-dark);
+  color: white;
+  border-color: var(--green-dark);
+}
   </style>
 </head>
 <body>
@@ -1262,23 +1354,36 @@
 
   <button class="ai-bubble" onclick="openAiAssistant()">🤖</button>
 
+<button class="ai-bubble" onclick="openAiAssistant()">🤖</button>
+
 <div class="ai-modal" id="aiModal" onclick="closeAiAssistant(event)">
   <div class="ai-window" onclick="event.stopPropagation()">
     <div class="ai-window-title">Asystent Bananicook</div>
     <div class="ai-window-subtitle">
-      Mogę pomóc w podstawowych pytaniach o zamówienia, godziny, kontakt i social media.
+      Napisz wiadomość. Pomogę w sprawie menu, godzin, kontaktu, social mediów i zamawiania.
     </div>
 
-    <div class="ai-chip-list">
-      <button class="ai-chip" onclick="askAi('godziny')">Godziny zamówień</button>
-      <button class="ai-chip" onclick="askAi('kontakt')">Kontakt</button>
-      <button class="ai-chip" onclick="askAi('social')">Social media</button>
-      <button class="ai-chip" onclick="askAi('jak_zamowic')">Jak zamówić?</button>
-      <button class="ai-chip" onclick="askAi('menu')">Co znajdę w menu?</button>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        Cześć! Jestem asystentem Bananicook 🍽️<br><br>
+        Mogę pomóc w sprawie:
+        <br>• menu
+        <br>• godzin zamówień
+        <br>• kontaktu
+        <br>• Facebooka i Instagrama
+        <br>• sposobu składania zamówień
+      </div>
     </div>
 
-    <div class="ai-answer" id="aiAnswer">
-      Cześć! Jestem prostym asystentem Bananicook. Wybierz jedno z pytań powyżej.
+    <div class="chat-input-row">
+      <input
+        type="text"
+        id="chatInput"
+        class="chat-input"
+        placeholder="Napisz wiadomość..."
+        onkeypress="if(event.key==='Enter') sendChatMessage()"
+      >
+      <button class="chat-send" onclick="sendChatMessage()">Wyślij</button>
     </div>
 
     <button class="ai-close" onclick="closeAiAssistant()">Zamknij</button>
@@ -1770,6 +1875,10 @@ function hideSuccess() {
 
 function openAiAssistant() {
   document.getElementById('aiModal').classList.add('visible');
+  setTimeout(() => {
+    const input = document.getElementById('chatInput');
+    if (input) input.focus();
+  }, 100);
 }
 
 function closeAiAssistant(event) {
@@ -1778,18 +1887,227 @@ function closeAiAssistant(event) {
   }
 }
 
-function askAi(topic) {
-  const box = document.getElementById('aiAnswer');
+function addChatMessage(text, sender = 'bot') {
+  const box = document.getElementById('chatMessages');
+  if (!box) return;
 
-  const answers = {
-    godziny: 'Zamówienia przyjmujemy od poniedziałku do piątku w godzinach 6:00–15:00.',
-    kontakt: 'Możesz skontaktować się telefonicznie pod numerem 698 443 958.',
-    social: 'Znajdziesz nas na Facebooku i Instagramie jako Bananicook. Linki są dostępne w sekcji Kontakt i social media.',
-    jak_zamowic: 'Wybierz produkty z menu, dodaj ilości, przejdź do koszyka, podaj imię i numer telefonu, a następnie złóż zamówienie.',
-    menu: 'W menu znajdziesz m.in. pierogi gotowane, pierogi smażone w panko, gołąbki, pyzy, krokiety, naleśniki i napoje.'
+  const msg = document.createElement('div');
+  msg.className = `chat-msg ${sender}`;
+  msg.innerHTML = text;
+  box.appendChild(msg);
+  box.scrollTop = box.scrollHeight;
+}
+
+function addChatActions(actions = []) {
+  const box = document.getElementById('chatMessages');
+  if (!box || !actions.length) return;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-actions';
+
+  actions.forEach(action => {
+    const btn = document.createElement('button');
+    btn.className = `chat-action-btn ${action.primary ? 'primary' : ''}`;
+    btn.textContent = action.label;
+    btn.onclick = action.onClick;
+    wrap.appendChild(btn);
+  });
+
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text) return;
+
+  addChatMessage(escapeHtml(text), 'user');
+  input.value = '';
+
+  const reply = getPseudoAiReplyV11(text);
+
+  setTimeout(() => {
+    addChatMessage(reply.text, 'bot');
+    if (reply.actions && reply.actions.length) {
+      addChatActions(reply.actions);
+    }
+  }, 250);
+}
+
+function getPseudoAiReplyV11(message) {
+  const msg = normalizeText(message);
+  const matchedItem = findBestMenuItemMatch(message);
+
+  if (containsAny(msg, ['godziny', 'otwarte', 'do której', 'do ktorej', 'kiedy'])) {
+    return {
+      text: 'Zamówienia przyjmujemy od <strong>poniedziałku do piątku</strong> w godzinach <strong>6:00–15:00</strong>.'
+    };
+  }
+
+  if (containsAny(msg, ['telefon', 'numer', 'kontakt', 'zadzwonic', 'zadzwonić'])) {
+    return {
+      text: 'Możesz skontaktować się z restauracją pod numerem: <strong>698 443 958</strong>.'
+    };
+  }
+
+  if (containsAny(msg, ['facebook', 'fb'])) {
+    return {
+      text: 'Facebook Bananicook: <a href="https://www.facebook.com/Bananicook/" target="_blank" rel="noopener noreferrer">otwórz profil</a>.'
+    };
+  }
+
+  if (containsAny(msg, ['instagram', 'insta'])) {
+    return {
+      text: 'Instagram Bananicook: <a href="https://www.instagram.com/bananicook" target="_blank" rel="noopener noreferrer">otwórz profil</a>.'
+    };
+  }
+
+  if (containsAny(msg, ['jak zamówić', 'jak zamowic', 'zamówić', 'zamowic', 'złożyć zamówienie', 'zlozyc zamowienie'])) {
+    return {
+      text: 'Aby złożyć zamówienie, wybierz produkty z menu, dodaj ilości przyciskami <strong>+</strong> i <strong>−</strong>, przejdź do koszyka, wpisz <strong>imię</strong> i <strong>numer telefonu</strong>, a następnie kliknij <strong>Złóż zamówienie</strong>.'
+    };
+  }
+
+  if (containsAny(msg, ['menu', 'co macie', 'jakie dania', 'jakie macie', 'oferta'])) {
+    return {
+      text: 'W menu znajdziesz m.in. <strong>pierogi gotowane</strong>, <strong>pierogi smażone w panko</strong>, <strong>gołąbki</strong>, <strong>pyzy</strong>, <strong>krokiety</strong>, <strong>naleśniki</strong> i <strong>napoje</strong>.'
+    };
+  }
+
+  if (containsAny(msg, ['polecasz', 'poleć', 'polec', 'co wybrać', 'co wybrac'])) {
+    return {
+      text: 'Na start polecam <strong>pierogi z mięsem</strong>, <strong>pierogi z kapustą i grzybami leśnymi</strong> albo <strong>gołąbki mięsne z sosem pomidorowym</strong>.'
+    };
+  }
+
+  if (matchedItem && containsAny(msg, ['ile kosztuje', 'ile kosztuja', 'cena', 'kosztuje'])) {
+    return {
+      text: `<strong>${matchedItem.name}</strong> kosztuje <strong>${matchedItem.price.toFixed(2).replace('.', ',')} zł</strong>.`
+    };
+  }
+
+  if (matchedItem && containsAny(msg, ['czy jest', 'czy sa', 'czy są', 'czy macie', 'dostepne', 'dostępne'])) {
+    const available = !unavailable[matchedItem.id];
+    return {
+      text: available
+        ? `<strong>${matchedItem.name}</strong> jest obecnie <strong>dostępne</strong>. Cena: <strong>${matchedItem.price.toFixed(2).replace('.', ',')} zł</strong>.`
+        : `<strong>${matchedItem.name}</strong> jest obecnie <strong>niedostępne</strong>.`
+    };
+  }
+
+  if (matchedItem && containsAny(msg, ['dodaj', 'wrzuc', 'wrzuć', 'do koszyka', 'zamow'])) {
+    const qty = extractQuantity(msg) || 1;
+    return {
+      text: `Mogę dodać do koszyka: <strong>${qty} × ${matchedItem.name}</strong>.`,
+      actions: [
+        {
+          label: `Dodaj ${qty} × do koszyka`,
+          primary: true,
+          onClick: () => addItemToCartFromAi(matchedItem.id, qty)
+        }
+      ]
+    };
+  }
+
+  if (matchedItem) {
+    const available = !unavailable[matchedItem.id];
+    return {
+      text: `<strong>${matchedItem.name}</strong><br>Cena: <strong>${matchedItem.price.toFixed(2).replace('.', ',')} zł</strong><br>Status: <strong>${available ? 'dostępne' : 'niedostępne'}</strong>.`,
+      actions: available ? [
+        {
+          label: 'Dodaj 1 × do koszyka',
+          primary: true,
+          onClick: () => addItemToCartFromAi(matchedItem.id, 1)
+        }
+      ] : []
+    };
+  }
+
+  if (containsAny(msg, ['blik', 'płatność', 'platnosc', 'karta', 'google pay'])) {
+    return {
+      text: 'Na tę chwilę w aplikacji nie mamy jeszcze aktywnej bramki płatności online. Obecnie skupiamy się na wygodnym składaniu zamówień.'
+    };
+  }
+
+  return {
+    text: 'Mogę pomóc w sprawie <strong>menu</strong>, <strong>godzin</strong>, <strong>kontaktu</strong>, <strong>social mediów</strong> i <strong>składania zamówienia</strong>. Napisz np. <em>„czy macie pierogi z mięsem?”</em>, <em>„ile kosztują gołąbki?”</em> albo <em>„dodaj kefir”</em>.'
   };
+}
 
-  box.textContent = answers[topic] || 'Przepraszam, nie mam jeszcze odpowiedzi na to pytanie.';
+function normalizeText(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replaceAll('ą', 'a')
+    .replaceAll('ć', 'c')
+    .replaceAll('ę', 'e')
+    .replaceAll('ł', 'l')
+    .replaceAll('ń', 'n')
+    .replaceAll('ó', 'o')
+    .replaceAll('ś', 's')
+    .replaceAll('ż', 'z')
+    .replaceAll('ź', 'z');
+}
+
+function containsAny(text, phrases) {
+  return phrases.some(p => text.includes(normalizeText(p)));
+}
+
+function extractQuantity(text) {
+  const match = String(text).match(/\b(\d+)\b/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+function findBestMenuItemMatch(message) {
+  const msg = normalizeText(message);
+  const allItems = MENU.flatMap(cat => cat.items);
+
+  let best = null;
+  let bestScore = 0;
+
+  allItems.forEach(item => {
+    const name = normalizeText(item.name);
+    let score = 0;
+
+    const words = name.split(/\s+/).filter(w => w.length > 2);
+    words.forEach(word => {
+      if (msg.includes(word)) score += 1;
+    });
+
+    if (msg.includes('pierogi') && name.includes('pierogi')) score += 2;
+    if (msg.includes('mies') && name.includes('mies')) score += 2;
+    if (msg.includes('serem i ziemniakami') && name.includes('serem i ziemniakami')) score += 3;
+    if (msg.includes('szpinak') && name.includes('szpinakiem')) score += 2;
+    if (msg.includes('kapust') && name.includes('kapust')) score += 2;
+    if (msg.includes('grzyb') && name.includes('grzyb')) score += 2;
+    if (msg.includes('golab') && name.includes('golab')) score += 3;
+    if (msg.includes('pyzy') && name.includes('pyzy')) score += 3;
+    if (msg.includes('krokiet') && name.includes('krokiet')) score += 3;
+    if (msg.includes('nalesnik') && name.includes('nalesniki')) score += 3;
+    if (msg.includes('kefir') && name.includes('kefir')) score += 4;
+    if (msg.includes('sok') && name.includes('sok')) score += 2;
+
+    if (score > bestScore) {
+      best = item;
+      bestScore = score;
+    }
+  });
+
+  return bestScore >= 2 ? best : null;
+}
+
+function addItemToCartFromAi(itemId, qty) {
+  cart[itemId] = (cart[itemId] || 0) + qty;
+
+  const qtyEl = document.getElementById('qty-' + itemId);
+  if (qtyEl) {
+    qtyEl.textContent = cart[itemId];
+  }
+
+  updateCartCount();
+  addChatMessage(`Dodałem do koszyka: <strong>${qty} ×</strong>. Możesz teraz otworzyć koszyk.`, 'bot');
 }
 
 function startAdminAutoRefresh() {
