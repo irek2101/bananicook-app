@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bananicook-v14';
+const CACHE_NAME = 'bananicook-v16';
 const ASSETS = [
   './',
   './index.html',
